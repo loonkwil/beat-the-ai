@@ -1,0 +1,89 @@
+@import "@fontsource/iosevka/600.css";
+
+:root {
+  --white: #ffffff;
+  --black: #212121;
+  --yellow: #fee3c8;
+  --red: #dd6c64;
+  --green: #6bd6b8;
+
+  --main-bg: var(--yellow);
+  --main-text: var(--black);
+  --panel-bg: var(--white);
+  --panel-border: var(--black);
+  --panel-text: var(--black);
+  --icon-succeeded: var(--green);
+  --icon-failed: var(--red);
+  --icon-pending: var(--yellow);
+
+  --space: 1rem;
+
+  @media (prefers-color-scheme: dark) {
+    --main-bg: var(--black);
+    --main-text: var(--white);
+    --panel-bg: var(--yellow);
+    --panel-border: var(--white);
+    --icon-pending: var(--white);
+  }
+
+  @media (width >= 640px) {
+    --space: 2rem;
+  }
+  @media (width >= 768px) {
+    --space: 3rem;
+  }
+  @media (width >= 1024px) {
+    --space: 4rem;
+  }
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: "Iosevka", sans-serif;
+  font-weight: 600;
+  margin: 0;
+  color: var(--main-text);
+  background: var(--main-bg);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+dfn {
+  text-decoration: underline;
+  font-style: normal;
+}
+
+textarea {
+  resize: none;
+  background: transparent;
+  border: none;
+  margin: 0;
+}
+
+button {
+  border: none;
+}

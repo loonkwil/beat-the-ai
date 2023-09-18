@@ -1,0 +1,26 @@
+.root {
+  display: flex;
+
+  & > h2 {
+    position: fixed;
+    top: -9999px;
+    left: -9999px;
+  }
+
+  & > *:not(button) {
+    flex: 1 1 100%;
+    overflow: auto;
+  }
+
+  & > button {
+    flex: 1 1 4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background: var(--black);
+    color: var(--white);
+    writing-mode: vertical-lr;
+    text-transform: uppercase;
+  }
+}

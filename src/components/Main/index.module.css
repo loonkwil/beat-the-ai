@@ -1,0 +1,16 @@
+.root {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background: var(--panel-bg);
+  border: 2px solid var(--panel-border);
+  color: var(--panel-text);
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 100% 100%;
+  grid-template-rows: 100%;
+  height: 100%;
+  translate: calc(-100% * var(--active-panel, 0));
+  transition: translate 200ms;
+}

@@ -1,0 +1,5 @@
+.root {
+  & h1 {
+    font-size: clamp(2rem, 15vw, 4rem);
+  }
+}

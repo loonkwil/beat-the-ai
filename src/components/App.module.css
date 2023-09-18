@@ -1,0 +1,13 @@
+.root {
+  height: 100vh;
+  @supports (height: 1dvh) {
+    height: 100dvh;
+  }
+
+  display: grid;
+  grid-template-rows: auto 1fr;
+  grid-template-columns: minmax(1rem, 48rem);
+  padding: var(--space);
+  gap: calc(var(--space) / 2);
+  justify-content: center;
+}

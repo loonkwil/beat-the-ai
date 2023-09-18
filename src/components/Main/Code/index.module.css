@@ -1,0 +1,15 @@
+.root {
+  & :global(.cm-editor) {
+    height: 100%;
+    outline: inherit;
+  }
+
+  & :global(.cm-scroller) {
+    font-family: inherit;
+  }
+
+  & :global(.cm-content) {
+    padding: calc(var(--space) / 2);
+    min-height: 100%;
+  }
+}
