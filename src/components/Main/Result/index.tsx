@@ -15,7 +15,9 @@ export default function Result({ editorId }: { editorId: string }) {
           </div>
           <div className={styles.details}>
             {Array.from({ length: 100 }, () => (
-              <span data-result={i > 2 ? null : Math.round(Math.random())} />
+              <span
+                data-result={i > 2 ? null : Math.floor(Math.random() * 3) / 2}
+              />
             ))}
           </div>
         </div>
