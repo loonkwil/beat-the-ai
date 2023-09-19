@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useContext } from "react";
 import { EditorView, minimalSetup } from "codemirror";
 import {
   keymap,
@@ -15,32 +15,22 @@ import {
   completionKeymap,
 } from "@codemirror/autocomplete";
 import { javascript } from "@codemirror/lang-javascript";
+import AppContext from "~/context/App";
 import styles from "~/components/Main/Code/index.module.css";
 
-const start = `/**
- * Function that calculates the next move in a given state.
- * @param {Array<number> & { length: 19 }} state - 1: 🤓, 0: ⍽, -1: 🤖
- * @returns {[number, number]} x, y coordinates of your next move
- */
-function move(state) {`;
-
-const placeholder = `
-  const [x, y] = Array.from(
-    { length: 2 },
-    () => Math.floor(Math.random() * 19),
-  );
-  return state[x][y] ? move(state) : [x, y];
-`;
-
-const end = `}`;
-
 export default function Code({ editorId }: { editorId: string }) {
+  const [
+    {
+      code: { value, readOnlyRanges },
+    },
+    { setCode },
+  ] = useContext(AppContext);
   const wrapperRef = useRef<null | Element>(null);
   const editorRef = useRef<null | EditorView>(null);
 
   useEffect(() => {
     editorRef.current = new EditorView({
-      doc: `${start}${placeholder}${end}`,
+      doc: value,
       extensions: [
         minimalSetup,
         EditorState.allowMultipleSelections.of(true),
@@ -54,15 +44,18 @@ export default function Code({ editorId }: { editorId: string }) {
         keymap.of([...closeBracketsKeymap, ...completionKeymap]),
         javascript(),
         EditorView.lineWrapping,
-        EditorState.changeFilter.of(({ state: { doc } }) => {
-          const str = doc.toString();
-          return str.startsWith(start) && str.endsWith(end);
+        EditorState.changeFilter.of(({ startState, state }) => {
+          const prevValue = startState.doc.toString();
+          const nextValue = state.doc.toString();
+          return readOnlyRanges.every(
+            ([start, end]: [number, number]) =>
+              prevValue.slice(start, end) === nextValue.slice(start, end),
+          );
         }),
-        EditorView.updateListener.of(({ docChanged, state: { doc } }) => {
+        EditorView.updateListener.of(({ docChanged, state }) => {
           if (docChanged) {
-            const str = doc.toString();
-            const body = str.slice(start.length).slice(0, -1 * end.length);
-            console.log(body);
+            const nextValue = state.doc.toString();
+            setCode(nextValue);
           }
         }),
       ],
@@ -72,7 +65,7 @@ export default function Code({ editorId }: { editorId: string }) {
     editorRef.current.focus();
 
     return () => editorRef.current?.destroy();
-  }, []);
+  }, [setCode, readOnlyRanges]);
 
   return <div id={editorId} className={styles.root} ref={wrapperRef} />;
 }

@@ -1,15 +1,12 @@
+import { useContext } from "react";
+import AppContext from "~/context/App";
 import Panel from "~/components/Main/Panel";
 import Code from "~/components/Main/Code";
 import Result from "~/components/Main/Result";
 import styles from "~/components/Main/index.module.css";
 
-export default function Main({
-  activePanel = 0,
-  setActivePanel,
-}: {
-  activePanel?: number;
-  setActivePanel: (idx: number) => void;
-}) {
+export default function Main() {
+  const [{ activePanel }, { setActivePanel }] = useContext(AppContext);
   const editorId = "code";
   return (
     <main
