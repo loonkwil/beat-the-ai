@@ -8,7 +8,7 @@ type State = {
   activePanel: number;
   code: {
     value: string;
-    readOnlyRanges: Array<[number, number?]>;
+    fnBodyPosition: [number, number];
   };
 };
 
@@ -21,17 +21,17 @@ const initialState: State = {
   code: {
     value: `/**
  * Function that calculates the next move in a given state.
- * @param {Array<number> & { length: 19 }} state - 🤖: -1, ⍽: 0, 🤓: 1
+ * @param {Array<Array<number>>} board - 🤖: -1, ⍽: 0, 🤓: 1
  * @returns {[number, number]} x, y coordinates of your next move
  */
-function move(state) {
+function move(board) {
   const [x, y] = Array.from(
     { length: 2 },
     () => Math.floor(Math.random() * 19),
   );
-  return state[x][y] ? move(state) : [x, y];
+  return board[x][y] ? move(board) : [x, y];
 }`,
-    readOnlyRanges: [[0, 227], [-1]],
+    fnBodyPosition: [217, -1],
   },
 };
 

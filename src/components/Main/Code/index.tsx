@@ -1,71 +1,29 @@
-import { useRef, useEffect, useContext } from "react";
-import { EditorView, minimalSetup } from "codemirror";
-import {
-  keymap,
-  rectangularSelection,
-  crosshairCursor,
-  highlightActiveLine,
-} from "@codemirror/view";
-import { indentOnInput, bracketMatching } from "@codemirror/language";
-import { EditorState } from "@codemirror/state";
-import {
-  closeBrackets,
-  autocompletion,
-  closeBracketsKeymap,
-  completionKeymap,
-} from "@codemirror/autocomplete";
-import { javascript } from "@codemirror/lang-javascript";
+import { useRef, useContext, useCallback } from "react";
 import AppContext from "~/context/App";
+import { useCodeMirror } from "~/hooks";
+import sliceFn from "~/lib/sliceFn";
 import styles from "~/components/Main/Code/index.module.css";
 
 export default function Code({ editorId }: { editorId: string }) {
-  const [
-    {
-      code: { value, readOnlyRanges },
+  const [{ code }, { setCode }] = useContext(AppContext);
+  const changeFilter = useCallback(
+    (prev: string, next: string): boolean => {
+      const [a, b] = [prev, next].map((str) =>
+        sliceFn(str, code.fnBodyPosition),
+      );
+      return a[0] === b[0] && a[2] === b[2];
     },
-    { setCode },
-  ] = useContext(AppContext);
-  const wrapperRef = useRef<null | Element>(null);
-  const editorRef = useRef<null | EditorView>(null);
+    [code.fnBodyPosition],
+  );
 
-  useEffect(() => {
-    editorRef.current = new EditorView({
-      doc: value,
-      extensions: [
-        minimalSetup,
-        EditorState.allowMultipleSelections.of(true),
-        indentOnInput(),
-        bracketMatching(),
-        closeBrackets(),
-        autocompletion({ icons: false }),
-        rectangularSelection(),
-        crosshairCursor(),
-        highlightActiveLine(),
-        keymap.of([...closeBracketsKeymap, ...completionKeymap]),
-        javascript(),
-        EditorView.lineWrapping,
-        EditorState.changeFilter.of(({ startState, state }) => {
-          const prevValue = startState.doc.toString();
-          const nextValue = state.doc.toString();
-          return readOnlyRanges.every(
-            ([start, end]: [number, number]) =>
-              prevValue.slice(start, end) === nextValue.slice(start, end),
-          );
-        }),
-        EditorView.updateListener.of(({ docChanged, state }) => {
-          if (docChanged) {
-            const nextValue = state.doc.toString();
-            setCode(nextValue);
-          }
-        }),
-      ],
-      parent: wrapperRef.current,
-    });
+  const ref = useRef<HTMLDivElement>(null);
+  useCodeMirror({
+    root: ref,
+    initialValue: code.value,
+    changeFilter,
+    autoFocus: true,
+    onChange: setCode,
+  });
 
-    editorRef.current.focus();
-
-    return () => editorRef.current?.destroy();
-  }, [setCode, readOnlyRanges]);
-
-  return <div id={editorId} className={styles.root} ref={wrapperRef} />;
+  return <div id={editorId} className={styles.root} ref={ref} />;
 }
