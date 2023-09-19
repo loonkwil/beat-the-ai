@@ -8,21 +8,38 @@ import styles from "~/components/Main/index.module.css";
 export default function Main() {
   const [{ activePanel }, { setActivePanel }] = useContext(AppContext);
   const editorId = "code";
+  const panels = [
+    {
+      title: "Code",
+      content: (
+        <>
+          <Code editorId={editorId} />
+          <button onClick={() => setActivePanel(1)}>run ▶︎</button>
+        </>
+      ),
+    },
+    {
+      title: "Result",
+      content: (
+        <>
+          <button onClick={() => setActivePanel(0)}>code ◀︎</button>
+          <Result editorId={editorId} />
+        </>
+      ),
+    },
+  ];
+
   return (
     <main
       className={styles.root}
       style={{ "--active-panel": activePanel } as React.CSSProperties}
     >
       <div className={styles.container}>
-        <Panel title="Code">
-          <Code editorId={editorId} />
-          <button onClick={() => setActivePanel(1)}>run ▶︎</button>
-        </Panel>
-
-        <Panel title="Result">
-          <button onClick={() => setActivePanel(0)}>code ◀︎</button>
-          <Result editorId={editorId} />
-        </Panel>
+        {panels.map(({ title, content }, index) => (
+          <Panel key={title} title={title} active={activePanel === index}>
+            {content}
+          </Panel>
+        ))}
       </div>
     </main>
   );
