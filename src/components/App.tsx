@@ -21,7 +21,7 @@ const initialState: State = {
   code: {
     value: `/**
  * Function that calculates the next move in a given state.
- * @param {Array<number> & { length: 19 }} state - 1: 🤓, 0: ⍽, -1: 🤖
+ * @param {Array<number> & { length: 19 }} state - 🤖: -1, ⍽: 0, 🤓: 1
  * @returns {[number, number]} x, y coordinates of your next move
  */
 function move(state) {
