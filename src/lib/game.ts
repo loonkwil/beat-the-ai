@@ -1,4 +1,4 @@
-import { multiply, countWhile, coordinates } from "~/lib/math";
+import { multiply, countWhile, coordinates, some } from "~/lib/math";
 
 export type CellPosition = [number, number];
 export type CellValue = number;
@@ -21,31 +21,22 @@ function rotate(board: Board): Board {
   return multiply(board, -1);
 }
 
-export function neighbors(
+export function* neighbors(
   board: Board,
   cell: CellPosition,
-): Array<number> & { length: 4 } {
-  return [
+): Generator<number> {
+  const directions = [
     [0, 1], // ↑ ↓
     [1, 1], // ↗ ↙
     [1, 0], // → ←
     [1, -1], // ↘ ↖
-  ].map((direction) => {
-    const predicate = ([x, y]: CellPosition): boolean => board?.[x]?.[y] === 1;
-    return (
-      countWhile(coordinates(cell, direction), predicate) +
-      countWhile(coordinates(cell, multiply(direction, -1)), predicate)
-    );
-  });
-}
+  ];
 
-function won(board: Board): boolean {
-  return board.some((col: Array<CellValue>, x: number) =>
-    col.some(
-      (value: CellValue, y: number) =>
-        value === 1 && Math.max(...neighbors(board, [x, y])) >= 4,
-    ),
-  );
+  const predicate = ([x, y]: CellPosition): boolean => board?.[x]?.[y] === 1;
+  for (let dir of directions) {
+    yield countWhile(coordinates(cell, dir), predicate) +
+      countWhile(coordinates(cell, multiply(dir, -1)), predicate);
+  }
 }
 
 export function play(playerA: Player, playerB: Player): Game {
@@ -62,7 +53,7 @@ export function play(playerA: Player, playerB: Player): Game {
       return { result: 0, moves };
     }
 
-    if (won(board)) {
+    if (some(neighbors(board, [x, y]), (n) => n >= 4)) {
       return { result: player === playerA ? 1 : -1, moves };
     }
 

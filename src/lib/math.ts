@@ -33,6 +33,18 @@ export function countWhile<T>(
   return i;
 }
 
+export function some<T>(
+  arr: Iterable<T>,
+  predicate: (v: T) => boolean,
+): boolean {
+  for (let i of arr) {
+    if (predicate(i)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 /**
  * @example
  * // returns [1, 1], [2, 2], [3, 3], ...
