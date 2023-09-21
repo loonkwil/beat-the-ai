@@ -5,8 +5,8 @@ type FixedArray<T, L> = Array<T> & { length: L };
 
 export type CellPosition = [number, number];
 export type CellValue = number;
-export type Row = FixedArray<number, 19>;
-export type Board = FixedArray<Row, 19>;
+export type Row = FixedArray<number, 15>;
+export type Board = FixedArray<Row, 15>;
 
 export type Move = CellPosition;
 export type Moves = Array<Move>;
@@ -61,7 +61,7 @@ export function play(players: [Player, Player]): {
 } {
   const moves = [];
 
-  let board = createBoard(19);
+  let board = createBoard(15);
   let color: Color = 1; // Black starts the game
   while (true) {
     const player = players[color];
@@ -75,7 +75,7 @@ export function play(players: [Player, Player]): {
     board = set(board, move, 1);
     moves.push(move);
 
-    if (moves.length === 19 ** 2) {
+    if (moves.length === 15 ** 2) {
       return { winner: -1, moves };
     }
 

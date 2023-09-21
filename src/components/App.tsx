@@ -56,7 +56,7 @@ const initialState: State = {
 function move(board) {
   const [x, y] = Array.from(
     { length: 2 },
-    () => Math.floor(Math.random() * 19),
+    () => Math.floor(Math.random() * 15),
   );
   return board[x][y] ? move(board) : [x, y];
 }`,
