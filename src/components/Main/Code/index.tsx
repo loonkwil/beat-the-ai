@@ -1,16 +1,14 @@
 import { useRef, useContext, useCallback } from "react";
 import AppContext from "~/context/App";
 import { useCodeMirror } from "~/hooks";
-import sliceFn from "~/lib/sliceFn";
+import { slice } from "~/lib/utils/func";
 import styles from "~/components/Main/Code/index.module.css";
 
 export default function Code({ editorId }: { editorId: string }) {
   const [{ code }, { setCode }] = useContext(AppContext);
   const changeFilter = useCallback(
     (prev: string, next: string): boolean => {
-      const [a, b] = [prev, next].map((str) =>
-        sliceFn(str, code.fnBodyPosition),
-      );
+      const [a, b] = [prev, next].map((str) => slice(str, code.fnBodyPosition));
       return a[0] === b[0] && a[2] === b[2];
     },
     [code.fnBodyPosition],

@@ -33,13 +33,15 @@
       background: var(--green);
     }
 
-    &:is([data-result="0"]) {
+    &:is([data-result="0.5"]) {
       background: var(--yellow);
     }
 
-    &:is([data-result="-1"]) {
+    &:is([data-result="0"]) {
       background: var(--red);
     }
+
+    transition: background 200ms;
   }
 }
 

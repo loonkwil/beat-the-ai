@@ -1,48 +1,48 @@
 import { useContext } from "react";
 import AppContext from "~/context/App";
-import { useGameScoring } from "~/hooks";
 import Icon from "~/components/Main/Result/Icon";
 import styles from "~/components/Main/Result/index.module.css";
 
+function Games({ rounds, games }) {
+  return Array.from({ length: rounds }, (_, gameIndex) => {
+    const game = games[gameIndex];
+    return <span key={gameIndex} data-result={game?.score} />;
+  });
+}
+
+function LevelResults({ status, level, score, rounds, games }) {
+  return (
+    <div
+      key={level}
+      className={`${styles.level} ${
+        status === "pending" ? styles.disabled : ""
+      }`}
+    >
+      <div className={styles.result} title={`${score}/${rounds}`}>
+        <h3>Level {level}</h3>
+        <Icon type={status} />
+      </div>
+      <div className={styles.details}>
+        <Games rounds={rounds} games={games} />
+      </div>
+    </div>
+  );
+}
+
 export default function Result({ editorId }: { editorId: string }) {
-  const [{ code, activePanel }] = useContext(AppContext);
-  const progress = useGameScoring({ code, compute: activePanel === 1 });
-
-  const iconType = (() => {
-    if (!progress.done) {
-      return "pending";
-    }
-
-    if (progress.score > 50) {
-      return "succeeded";
-    }
-
-    return "failed";
-  })();
+  const [{ results }] = useContext(AppContext);
   return (
     <output className={styles.root} htmlFor={editorId}>
-      <div className={styles.level}>
-        <div className={styles.result} title={`${progress.score}/100`}>
-          <h3>Level 1</h3>
-          <Icon type={iconType} />
-        </div>
-        <div className={styles.details}>
-          {progress.games.map((game, index) => (
-            <span key={index} data-result={game?.result} />
-          ))}
-        </div>
-      </div>
-      <div className={`${styles.level} ${styles.disabled}`}>
-        <div className={styles.result}>
-          <h3>Level 2</h3>
-          <Icon />
-        </div>
-        <div className={styles.details}>
-          {Array.from({ length: 100 }, (_, i) => (
-            <span key={i} />
-          ))}
-        </div>
-      </div>
+      {results.map(({ status, rounds, score, games }, levelIndex) => (
+        <LevelResults
+          key={levelIndex}
+          status={status}
+          level={levelIndex + 1}
+          score={score}
+          rounds={rounds}
+          games={games}
+        />
+      ))}
     </output>
   );
 }

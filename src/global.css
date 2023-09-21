@@ -14,7 +14,7 @@
   --panel-text: var(--black);
   --icon-succeeded: var(--green);
   --icon-failed: var(--red);
-  --icon-pending: var(--yellow);
+  --icon-ongoing: var(--yellow);
 
   --space: 1rem;
 
@@ -23,7 +23,7 @@
     --main-text: var(--white);
     --panel-bg: var(--yellow);
     --panel-border: var(--white);
-    --icon-pending: var(--white);
+    --icon-ongoing: var(--white);
   }
 
   @media (width >= 640px) {

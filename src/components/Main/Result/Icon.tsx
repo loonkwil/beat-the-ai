@@ -1,21 +1,21 @@
 export default function Icon({
   type = "empty",
 }: {
-  type?: "succeeded" | "failed" | "pending" | "empty";
+  type?: "succeeded" | "failed" | "ongoing" | "pending";
 }) {
   const icon = {
     succeeded: <path d="M10.833 16L14.6063 19.7733L22.1663 12.2267" />,
     failed: (
       <path d="M12.7266 19.7734L20.2732 12.2267M20.2732 19.7734L12.7266 12.2267" />
     ),
-    pending: (
+    ongoing: (
       <>
         <path d="M21.8283 16H21.8403" />
         <path d="M16.4943 16H16.5063" />
         <path d="M11.1593 16H11.1713" />
       </>
     ),
-    empty: null,
+    pending: null,
   }[type];
 
   return (
@@ -30,7 +30,7 @@ export default function Icon({
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        style={{ stroke: `var(--black` }}
+        style={{ stroke: "var(--black)" }}
       >
         <path
           d="M16.5003 29.3333C23.8337 29.3333 29.8337 23.3333 29.8337 16C29.8337 8.66667 23.8337 2.66667 16.5003 2.66667C9.16699 2.66667 3.16699 8.66667 3.16699 16C3.16699 23.3333 9.16699 29.3333 16.5003 29.3333Z"
