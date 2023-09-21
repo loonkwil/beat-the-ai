@@ -1,23 +1,28 @@
 import { useRef, useContext, useCallback } from "react";
 import AppContext from "~/context/App";
 import { useCodeMirror } from "~/hooks";
-import { slice } from "~/lib/utils/func";
+import { parse } from "~/lib/utils/func";
+import { initialCode } from "~/settings";
 import styles from "~/components/Main/Code/index.module.css";
+
+const ranges = parse(initialCode);
+const readonlyParts = {
+  start: initialCode.substring(0, ranges.body[0]),
+  end: initialCode.substring(ranges.body[1]),
+};
 
 export default function Code({ editorId }: { editorId: string }) {
   const [{ code }, { setCode }] = useContext(AppContext);
   const changeFilter = useCallback(
-    (prev: string, next: string): boolean => {
-      const [a, b] = [prev, next].map((str) => slice(str, code.fnBodyPosition));
-      return a[0] === b[0] && a[2] === b[2];
-    },
-    [code.fnBodyPosition],
+    (_: string, next: string): boolean =>
+      next.startsWith(readonlyParts.start) && next.endsWith(readonlyParts.end),
+    [],
   );
 
   const ref = useRef<HTMLDivElement>(null);
   useCodeMirror({
     root: ref,
-    initialValue: code.value,
+    initialValue: code,
     changeFilter,
     autoFocus: true,
     onChange: setCode,

@@ -1,10 +1,7 @@
+import { rounds } from "~/settings";
+
 export default class Arena extends EventTarget {
-  constructor({
-    fnBody,
-    rounds,
-    level,
-    threads = navigator.hardwareConcurrency,
-  }) {
+  constructor({ code, level, threads = navigator.hardwareConcurrency }) {
     super();
 
     this.workers = Array.from(
@@ -34,7 +31,7 @@ export default class Arena extends EventTarget {
     this.workers.forEach((worker) => {
       worker.addEventListener("message", onMessage);
       worker.addEventListener("error", onError);
-      worker.postMessage({ fnBody, level });
+      worker.postMessage({ code, level });
     });
   }
 

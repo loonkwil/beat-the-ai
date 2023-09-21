@@ -3,6 +3,7 @@ import { useGameScoring } from "~/hooks";
 import AppContext from "~/context/App";
 import Header from "~/components/Header";
 import Main from "~/components/Main";
+import { initialCode, rounds, levels } from "~/settings";
 import styles from "~/components/App.module.css";
 import type { Game } from "~/lib/game";
 
@@ -10,7 +11,6 @@ type Status = "failed" | "succeeded" | "ongoing" | "pending";
 
 type LevelResult = {
   status: Status;
-  rounds: number;
   score: number;
   games: Array<Game>;
 };
@@ -19,10 +19,7 @@ type Results = Array<LevelResult>;
 
 type State = {
   activePanel: number;
-  code: {
-    value: string;
-    fnBodyPosition: [number, number];
-  };
+  code: string;
   results: Error | Results;
 };
 
@@ -33,35 +30,15 @@ type Action =
   | { type: "ADD_RESULT"; payload: { level: number; game: Game } }
   | { type: "SHOW_ERROR"; payload: Error };
 
-const config = {
-  levels: 4,
-  rounds: 100,
-} as const;
-
-const initialResults = Array.from({ length: config.levels }, () => ({
+const initialResults = Array.from({ length: levels }, () => ({
   status: "pending",
-  rounds: config.rounds,
   score: 0,
   games: [],
 })) as Results;
 
 const initialState: State = {
   activePanel: 0, // 0: code, 1: result
-  code: {
-    value: `/**
- * Function that calculates the next move in a given state.
- * @param {Array<Array<number>>} board - 🤖: -1, ⍽: 0, 🤓: 1
- * @returns {[number, number]} x, y coordinates of your next move
- */
-function move(board) {
-  const [x, y] = Array.from(
-    { length: 2 },
-    () => Math.floor(Math.random() * 15),
-  );
-  return board[x][y] ? move(board) : [x, y];
-}`,
-    fnBodyPosition: [217, -1],
-  },
+  code: initialCode,
   results: initialResults,
 };
 
@@ -72,11 +49,11 @@ function getStatus({
   score: number;
   currentRound: number;
 }): Status {
-  if (currentRound < config.rounds) {
+  if (currentRound < rounds) {
     return "ongoing";
   }
 
-  return score < config.rounds / 2 ? "failed" : "succeeded";
+  return score < rounds / 2 ? "failed" : "succeeded";
 }
 
 function reducer(state: State, { type, payload }: Action): State {
@@ -84,7 +61,7 @@ function reducer(state: State, { type, payload }: Action): State {
     case "SET_ACTIVE_PANEL":
       return { ...state, activePanel: payload };
     case "SET_CODE":
-      return { ...state, code: { ...state.code, value: payload } };
+      return { ...state, code: payload };
     case "ADD_RESULT": {
       const { results: prevResults } = state;
       const nextResults =
@@ -96,7 +73,6 @@ function reducer(state: State, { type, payload }: Action): State {
       const { score } = game;
 
       const nextLevelResults = nextResults[level - 1];
-      nextLevelResults.rounds = config.rounds;
       nextLevelResults.score += score;
       nextLevelResults.games.push({ ...game, score });
       nextLevelResults.status = getStatus({
@@ -149,8 +125,6 @@ export default function App() {
   useGameScoring({
     code,
     compute: activePanel === 1,
-    rounds: config.rounds,
-    levels: config.levels,
     onResult: addResult,
     onError: showError,
   });

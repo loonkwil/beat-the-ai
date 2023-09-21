@@ -1,16 +1,27 @@
+type Range = [number, number];
+
 /**
- * Get the body of a function (and the text before and after it).
- *
- * @example
- * // returns ['function() {', ' console.log(1); ', '}']
- * slice('function() { console.log(1); }', [12, -1]);
+ * Creates a lightweight abstract syntax tree (AST) from a function declaration.
+ * It only works with function declarations, function expressions are not
+ * supported.
+ * @throws {Error}
  */
-export function slice(
-  str: string,
-  boundaries: [number, number],
-): [string, string, string] {
-  const before = str.slice(0, boundaries[0]);
-  const body = str.slice(boundaries[0], boundaries[1]);
-  const after = str.slice(boundaries[1]);
-  return [before, body, after];
+export function parse(str: string): {
+  0: number;
+  1: number;
+  id: Range;
+  params: Range;
+  body: Range;
+} {
+  const re = /function\s*(\w*)\s*[(]([\w\s,]*)[)]\s*[{](.*)[}]/ds;
+  const matches = re.exec(str);
+  if (!matches) {
+    throw new Error("Function declaration not found");
+  }
+
+  const {
+    indices: [fn, id, params, body],
+  } = matches;
+
+  return { ...fn, id, params, body };
 }
