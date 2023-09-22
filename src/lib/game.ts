@@ -1,35 +1,8 @@
 import { multiply, coordinates } from "~/lib/utils/math";
 import { countWhile, some } from "~/lib/utils/list";
 
-type FixedArray<T, L> = Array<T> & { length: L };
-
-export type CellPosition = [number, number];
-export type CellValue = number;
-export type Row = FixedArray<number, 15>;
-export type Board = FixedArray<Row, 15>;
-
-export type Move = CellPosition;
-export type Moves = Array<Move>;
-
-export type Player = (board: Board) => Move;
-export type PlayerName = "user" | "robot";
-export type Color = 0 | 1;
-export type Winner = Color | -1;
-
-export type Order = [PlayerName, PlayerName];
-export type Score = 0 | 0.5 | 1;
-export type Game = { moves: Moves; winner: Winner; order: Order; score: Score };
-
-function createBoard(length = 15): Board {
-  return Array.from({ length }, () => Array.from({ length }).fill(0)) as Board;
-}
-
-function rotate(board: Board): Board {
-  return multiply(board, -1);
-}
-
 function stringifyMove([x, y]: Move): string {
-  return `${String.fromCharCode("A".charCodeAt() + x)}${y + 1}`;
+  return String.fromCharCode("A".charCodeAt(0) + x) + `${y + 1}`;
 }
 
 function stringifyMoves(moves: Moves): string {
@@ -73,17 +46,20 @@ function stringifyBoard(moves: Moves): string {
   }, emptyBoard);
 }
 
+function createBoard(length = 15): Board {
+  return Array.from({ length }, () => Array.from({ length }).fill(0)) as Board;
+}
+
+function rotate(board: Board): Board {
+  return multiply(board, -1);
+}
+
 function isMoveValid(move: any): boolean {
-  return (
-    Array.isArray(move) &&
-    move.length === 2 &&
-    typeof move[0] === "number" &&
-    typeof move[1] === "number" &&
-    move[0] < 15 &&
-    move[0] >= 0 &&
-    move[1] < 15 &&
-    move[1] >= 0
-  );
+  if (!Array.isArray(move) || move.length !== 2) {
+    return false;
+  }
+
+  return move.every((v) => typeof v === "number" && v < 15 && v >= 0);
 }
 
 export function* neighbors(
@@ -104,44 +80,68 @@ export function* neighbors(
   }
 }
 
-export function play(players: [Player, Player]): {
-  winner: Winner;
+function createInvalidMoveError({
+  moves,
+  move,
+}: {
   moves: Moves;
-} {
+  move: Move;
+}): Error {
+  const msg = [
+    "Your function returned with an invalid move!",
+    stringifyMoves(moves),
+    "",
+    stringifyBoard(moves),
+    "",
+    `The returned value was: ${JSON.stringify(move)}.`,
+  ].join("\n");
+  return new Error(msg);
+}
+
+function createOccupiedCellError({
+  moves,
+  move,
+}: {
+  moves: Moves;
+  move: Move;
+}): Error {
+  const msg = [
+    "Your function returned with an occupied cell!",
+    stringifyMoves(moves),
+    "",
+    stringifyBoard(moves),
+    "",
+    `Your move was: ${stringifyMove(move)}`,
+  ].join("\n");
+  return new Error(msg);
+}
+
+export function play(players: Players): Game {
   const moves = [];
 
   let board = createBoard(15);
-  let color: Color = 1; // Black starts the game
+  let color = 1 as Color; // Black starts the game
   while (true) {
     const player = players[color];
 
-    const move = player(structuredClone(board));
+    // Create a deep copy of a board to prevent cheating
+    const boardCopy = structuredClone(board);
+    const move = player(boardCopy);
+
     if (!isMoveValid(move)) {
-      const msg = `Your function returned with an invalid move!
-${stringifyMoves(moves)}
-
-${stringifyBoard(moves)}
-
-The returned value was: ${JSON.stringify(move)}`;
-      throw new Error(msg);
+      throw createInvalidMoveError({ moves, move });
     }
 
     const [x, y] = move;
     if (board[x][y] !== 0) {
-      const msg = `Your function returned with an occupied cell!
-${stringifyMoves(moves)}
-
-${stringifyBoard(moves)}
-
-Your move was: ${stringifyMove(move)}`;
-      throw new Error(msg);
+      throw createOccupiedCellError({ moves, move });
     }
 
     board[x][y] = 1;
     moves.push(move);
 
     if (moves.length === 15 ** 2) {
-      return { winner: -1, moves };
+      return { winner: 0, moves };
     }
 
     if (some(neighbors(board, move), (n) => n >= 4)) {
@@ -149,6 +149,6 @@ Your move was: ${stringifyMove(move)}`;
     }
 
     board = rotate(board);
-    color = ((color + 1) % 2) as Color;
+    color *= -1;
   }
 }

@@ -1,7 +1,6 @@
 import { shuffle } from "~/lib/utils/list";
 import { play } from "~/lib/game";
 import { parse } from "~/lib/utils/func";
-import type { Player, Winner, Order } from "~/lib/game";
 
 const robots = [
   // Level 1
@@ -40,32 +39,25 @@ function createUser(code: string): Player {
   ) as Player;
 }
 
-function getScore({ winner, order }: { winner: Winner; order: Order }): number {
-  if (winner === -1) {
-    return 0.5;
-  }
-
-  return order[winner] === "user" ? 1 : 0;
-}
-
 const onMessage = ({
   data: { code, level = 1 },
 }: {
   data: { code: string; level?: number };
 }) => {
-  const players = {
-    user: createUser(code),
-    robot: robots[level - 1],
-  };
+  const user = createUser(code);
+  const robot = robots[level - 1];
 
   while (true) {
-    const order = shuffle(["user", "robot"]) as Order;
+    const [white, black] = shuffle([user, robot]);
+    const players = {
+      "-1": white,
+      1: black,
+    };
 
-    const [white, black] = order.map((name) => players[name]);
-    const { winner, moves } = play([white, black]);
-    const score = getScore({ winner, order });
+    const { winner, moves } = play(players);
+    const score = winner === 0 ? 0.5 : players[winner] === user ? 1 : 0;
 
-    self.postMessage({ winner, moves, order, score });
+    self.postMessage({ winner, moves, score });
   }
 };
 

@@ -5,17 +5,6 @@ import Header from "~/components/Header";
 import Main from "~/components/Main";
 import { initialCode, rounds, levels } from "~/settings";
 import styles from "~/components/App.module.css";
-import type { Game } from "~/lib/game";
-
-type Status = "failed" | "succeeded" | "ongoing" | "pending";
-
-type LevelResult = {
-  status: Status;
-  score: number;
-  games: Array<Game>;
-};
-
-type Results = Array<LevelResult>;
 
 type State = {
   activePanel: number;
@@ -27,7 +16,7 @@ type Action =
   | { type: "SET_ACTIVE_PANEL"; payload: number }
   | { type: "SET_CODE"; payload: string }
   | { type: "RESET_RESULTS" }
-  | { type: "ADD_RESULT"; payload: { level: number; game: Game } }
+  | { type: "ADD_RESULT"; payload: { level: number; game: GameWithScore } }
   | { type: "SHOW_ERROR"; payload: Error };
 
 const initialResults = Array.from({ length: levels }, () => ({
@@ -46,7 +35,7 @@ function getStatus({
   score,
   currentRound,
 }: {
-  score: number;
+  score: Score;
   currentRound: number;
 }): Status {
   if (currentRound < rounds) {
@@ -74,7 +63,7 @@ function reducer(state: State, { type, payload }: Action): State {
 
       const nextLevelResults = nextResults[level - 1];
       nextLevelResults.score += score;
-      nextLevelResults.games.push({ ...game, score });
+      nextLevelResults.games.push(game);
       nextLevelResults.status = getStatus({
         score: nextLevelResults.score,
         currentRound: nextLevelResults.games.length,
@@ -107,8 +96,8 @@ export default function App() {
   );
 
   const addResult = useCallback(
-    ({ level, game }: { level: number; game: Game }) =>
-      dispatch({ type: "ADD_RESULT", payload: { level, game } }),
+    (data: { level: number; game: GameWithScore }) =>
+      dispatch({ type: "ADD_RESULT", payload: data }),
     [dispatch],
   );
 
@@ -118,8 +107,7 @@ export default function App() {
   );
 
   const showError = useCallback(
-    (message: string) =>
-      dispatch({ type: "SHOW_ERROR", payload: new Error(message) }),
+    (error: Error) => dispatch({ type: "SHOW_ERROR", payload: error }),
     [dispatch],
   );
 

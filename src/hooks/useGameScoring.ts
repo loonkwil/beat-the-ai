@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import Arena from "~/lib/Arena";
-import type { Game } from "~/lib/game";
 
 export default function useGameScoring({
   code,
@@ -10,7 +9,7 @@ export default function useGameScoring({
 }: {
   code: string;
   compute: boolean;
-  onResult: ({ level, game }: { level: number; game: Game }) => void;
+  onResult: ({ level, game }: { level: number; game: GameWithScore }) => void;
   onError: (e: Error) => void;
 }) {
   useEffect(() => {
@@ -20,11 +19,11 @@ export default function useGameScoring({
 
     const level = 1;
     const arena = new Arena({ code, level });
-    arena.addEventListener("result", ({ detail }) =>
+    arena.addEventListener("result", ({ detail }: { detail: GameWithScore }) =>
       onResult({ level, game: detail }),
     );
     arena.addEventListener("error", ({ message }: ErrorEvent) =>
-      onError(message),
+      onError(new Error(message)),
     );
 
     return () => arena.destroy();

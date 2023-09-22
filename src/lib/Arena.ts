@@ -1,7 +1,17 @@
 import { rounds } from "~/settings";
 
 export default class Arena extends EventTarget {
-  constructor({ code, level, threads = navigator.hardwareConcurrency }) {
+  workers: Array<Worker>;
+
+  constructor({
+    code,
+    level,
+    threads = navigator.hardwareConcurrency ?? 1,
+  }: {
+    code: string;
+    level: number;
+    threads?: number;
+  }) {
     super();
 
     this.workers = Array.from(
@@ -14,7 +24,7 @@ export default class Arena extends EventTarget {
 
     let i = 0;
 
-    const onMessage = ({ data }) => {
+    const onMessage = ({ data }: { data: GameWithScore }) => {
       i += 1;
       if (i >= rounds) {
         this.destroy();
