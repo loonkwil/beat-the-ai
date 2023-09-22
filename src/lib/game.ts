@@ -20,21 +20,70 @@ export type Order = [PlayerName, PlayerName];
 export type Score = 0 | 0.5 | 1;
 export type Game = { moves: Moves; winner: Winner; order: Order; score: Score };
 
-function get(board: Board, [x, y]: CellPosition): CellValue | undefined {
-  return board?.[x]?.[y];
-}
-
-function set(board: Board, [x, y]: CellPosition, value: CellValue): Board {
-  const col = board[x].toSpliced(y, 1, value);
-  return board.toSpliced(x, 1, col);
-}
-
-function createBoard(length: number): Board {
+function createBoard(length = 15): Board {
   return Array.from({ length }, () => Array.from({ length }).fill(0)) as Board;
 }
 
 function rotate(board: Board): Board {
   return multiply(board, -1);
+}
+
+function stringifyMove([x, y]: Move): string {
+  return `${String.fromCharCode("A".charCodeAt() + x)}${y + 1}`;
+}
+
+function stringifyMoves(moves: Moves): string {
+  return moves
+    .reduce(
+      (str, move, i) =>
+        `${str}${i % 2 ? "" : `${i + 1}. `}${stringifyMove(move)} `,
+      "",
+    )
+    .trim();
+}
+
+function stringifyBoard(moves: Moves): string {
+  const emptyBoard = [
+    "15 . . . . . . . . . . . . . . .",
+    "14 . . . . . . . . . . . . . . .",
+    "13 . . . . . . . . . . . . . . .",
+    "12 . . . . . . . . . . . . . . .",
+    "11 . . . . . . . . . . . . . . .",
+    "10 . . . . . . . . . . . . . . .",
+    " 9 . . . . . . . . . . . . . . .",
+    " 8 . . . . . . . . . . . . . . .",
+    " 7 . . . . . . . . . . . . . . .",
+    " 6 . . . . . . . . . . . . . . .",
+    " 5 . . . . . . . . . . . . . . .",
+    " 4 . . . . . . . . . . . . . . .",
+    " 3 . . . . . . . . . . . . . . .",
+    " 2 . . . . . . . . . . . . . . .",
+    " 1 . . . . . . . . . . . . . . .",
+    "   A B C D E F G H I J K L M N O",
+  ].join("\n");
+  const white = "O";
+  const black = "X";
+
+  return moves.reduce((board, [x, y], i) => {
+    const cell = i % 2 ? white : black;
+    const start = (14 - y) * (15 * 2 + 2 + 1) + x * 2 + 2;
+    //                            (1) (2) (3)      (1) (2)
+    // (1) size of a cell, (2) number of the left size, (3) new line
+    return `${board.substring(0, start)} ${cell}${board.substring(start + 2)}`;
+  }, emptyBoard);
+}
+
+function isMoveValid(move: any): boolean {
+  return (
+    Array.isArray(move) &&
+    move.length === 2 &&
+    typeof move[0] === "number" &&
+    typeof move[1] === "number" &&
+    move[0] < 15 &&
+    move[0] >= 0 &&
+    move[1] < 15 &&
+    move[1] >= 0
+  );
 }
 
 export function* neighbors(
@@ -48,7 +97,7 @@ export function* neighbors(
     /* ↘ ↖ */ [1, -1],
   ];
 
-  const predicate = (pos: CellPosition): boolean => get(board, pos) === 1;
+  const predicate = ([x, y]: CellPosition): boolean => board?.[x]?.[y] === 1;
   for (const dir of directions) {
     yield countWhile(coordinates(cell, dir), predicate) +
       countWhile(coordinates(cell, multiply(dir, -1)), predicate);
@@ -65,14 +114,30 @@ export function play(players: [Player, Player]): {
   let color: Color = 1; // Black starts the game
   while (true) {
     const player = players[color];
-    const move = player(board);
-    // TODO detect if the board has not changed
 
-    if (get(board, move) !== 0) {
-      throw new Error(`Invalid move: [${move.join(", ")}]`);
+    const move = player(structuredClone(board));
+    if (!isMoveValid(move)) {
+      const msg = `Your function returned with an invalid move!
+${stringifyMoves(moves)}
+
+${stringifyBoard(moves)}
+
+The returned value was: ${JSON.stringify(move)}`;
+      throw new Error(msg);
     }
 
-    board = set(board, move, 1);
+    const [x, y] = move;
+    if (board[x][y] !== 0) {
+      const msg = `Your function returned with an occupied cell!
+${stringifyMoves(moves)}
+
+${stringifyBoard(moves)}
+
+Your move was: ${stringifyMove(move)}`;
+      throw new Error(msg);
+    }
+
+    board[x][y] = 1;
     moves.push(move);
 
     if (moves.length === 15 ** 2) {

@@ -118,7 +118,8 @@ export default function App() {
   );
 
   const showError = useCallback(
-    (e: Error) => dispatch({ type: "SHOW_ERROR", payload: e }),
+    (message: string) =>
+      dispatch({ type: "SHOW_ERROR", payload: new Error(message) }),
     [dispatch],
   );
 

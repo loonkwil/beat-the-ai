@@ -19,8 +19,18 @@ function createUser(code: string): Player {
   const id = code.substring(...ranges.id);
   const params = code.substring(...ranges.params);
   const body = code.substring(...ranges.body);
+
+  // Hide the following objects to prevent cheating
+  const protectedObjects = [
+    "globalThis",
+    "self",
+    "postMessage",
+    "addEventListener",
+  ];
+
   return Function(
     "board",
+    ...protectedObjects,
     `
       return (function ${id}(${params}) {
         "use strict";
@@ -38,27 +48,25 @@ function getScore({ winner, order }: { winner: Winner; order: Order }): number {
   return order[winner] === "user" ? 1 : 0;
 }
 
-self.addEventListener(
-  "message",
-  ({
-    data: { code, level = 1 },
-  }: {
-    data: { code: string; level?: number };
-  }) => {
-    const players = {
-      user: createUser(code),
-      robot: robots[level - 1],
-    };
+const onMessage = ({
+  data: { code, level = 1 },
+}: {
+  data: { code: string; level?: number };
+}) => {
+  const players = {
+    user: createUser(code),
+    robot: robots[level - 1],
+  };
 
-    while (true) {
-      const order = shuffle(["user", "robot"]) as Order;
+  while (true) {
+    const order = shuffle(["user", "robot"]) as Order;
 
-      const [white, black] = order.map((name) => players[name]);
-      const { winner, moves } = play([white, black]);
-      const score = getScore({ winner, order });
+    const [white, black] = order.map((name) => players[name]);
+    const { winner, moves } = play([white, black]);
+    const score = getScore({ winner, order });
 
-      self.postMessage({ winner, moves, order, score });
-    }
-  },
-  { once: true },
-);
+    self.postMessage({ winner, moves, order, score });
+  }
+};
+
+self.addEventListener("message", onMessage, { once: true });

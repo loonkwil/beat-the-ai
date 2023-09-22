@@ -24,8 +24,11 @@ export default class Arena extends EventTarget {
       this.dispatchEvent(event);
     };
 
-    const onError = (e) => {
-      this.dispatchEvent("error", e);
+    const onError = ({ message }: ErrorEvent) => {
+      this.destroy();
+
+      const event = new ErrorEvent("error", { message });
+      this.dispatchEvent(event);
     };
 
     this.workers.forEach((worker) => {

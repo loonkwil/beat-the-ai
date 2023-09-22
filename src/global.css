@@ -88,3 +88,12 @@ button {
   border: none;
   font-family: inherit;
 }
+
+pre {
+  font-family: inherit;
+  white-space: pre-wrap;
+}
+
+code {
+  font-family: inherit;
+}

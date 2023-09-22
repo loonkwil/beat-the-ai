@@ -1,8 +1,7 @@
-import { useContext, useMemo } from "react";
+import { useContext } from "react";
 import AppContext from "~/context/App";
 import Icon from "~/components/Main/Result/Icon";
-import { levels, rounds } from "~/settings";
-import { shuffle } from "~/lib/utils/list"
+import { rounds } from "~/settings";
 import styles from "~/components/Main/Result/index.module.css";
 
 function Games({ games }) {
@@ -33,9 +32,13 @@ function LevelResults({ status, level, score, games }) {
 
 export default function Result({ editorId }: { editorId: string }) {
   const [{ results }] = useContext(AppContext);
-  return (
-    <output className={styles.root} htmlFor={editorId}>
-      {results.map(({ status, score, games }, levelIndex) => (
+  const content =
+    results instanceof Error ? (
+      <pre>
+        <code>{results.message}</code>
+      </pre>
+    ) : (
+      results.map(({ status, score, games }, levelIndex) => (
         <LevelResults
           key={levelIndex}
           status={status}
@@ -43,7 +46,12 @@ export default function Result({ editorId }: { editorId: string }) {
           score={score}
           games={games}
         />
-      ))}
+      ))
+    );
+
+  return (
+    <output className={styles.root} htmlFor={editorId}>
+      {content}
     </output>
   );
 }

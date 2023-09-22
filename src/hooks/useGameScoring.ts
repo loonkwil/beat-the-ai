@@ -20,10 +20,12 @@ export default function useGameScoring({
 
     const level = 1;
     const arena = new Arena({ code, level });
-    arena.addEventListener("result", ({ detail }) => {
-      onResult({ level, game: detail });
-    });
-    arena.addEventListener("error", (e) => onError(e));
+    arena.addEventListener("result", ({ detail }) =>
+      onResult({ level, game: detail }),
+    );
+    arena.addEventListener("error", ({ message }: ErrorEvent) =>
+      onError(message),
+    );
 
     return () => arena.destroy();
   }, [code, compute, onResult, onError]);
