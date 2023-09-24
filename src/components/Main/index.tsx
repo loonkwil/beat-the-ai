@@ -5,12 +5,13 @@ import Result from "~/components/Main/Result";
 import styles from "~/components/Main/index.module.css";
 
 export default function Main() {
-  const { activePanel } = useContext(AppContext);
+  const { code } = useContext(AppContext);
+  const activePanelIndex = code ? 1 : 0;
   const editorId = "code";
   return (
     <main
       className={styles.root}
-      style={{ "--active-panel": activePanel } as React.CSSProperties}
+      style={{ "--active-panel": activePanelIndex } as React.CSSProperties}
     >
       <div className={styles.container}>
         <Code editorId={editorId} />

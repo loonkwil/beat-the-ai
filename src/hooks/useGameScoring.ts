@@ -40,6 +40,7 @@ export default function useGameScoring({ code }: { code: string }) {
 
   useEffect(() => {
     if (!code) {
+      setState(initialResults);
       return;
     }
 

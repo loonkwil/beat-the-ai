@@ -1,11 +1,4 @@
-import {
-  useContext,
-  startTransition,
-  useCallback,
-  useEffect,
-  useRef,
-  useMemo,
-} from "react";
+import { useContext, useCallback, useEffect, useRef, useMemo } from "react";
 import AppContext from "~/context/App";
 import Panel from "~/components/Main/Panel";
 import Icon from "~/components/Main/Result/Icon";
@@ -43,7 +36,7 @@ function LevelResults({ status, level, score, games, idMap }) {
 
 export default function Result({ editorId }: { editorId: string }) {
   const outputRef = useRef();
-  const { code, setCode, activePanel, setActivePanel } = useContext(AppContext);
+  const { code, setCode } = useContext(AppContext);
   const results = useGameScoring({ code });
   const idMap = useMemo(
     () => range(0, levels).map(() => shuffle(range(0, rounds))),
@@ -67,23 +60,17 @@ export default function Result({ editorId }: { editorId: string }) {
       ))
     );
 
-  const handleClick = useCallback(
-    () =>
-      startTransition(() => {
-        setCode(null);
-        setActivePanel(0);
-      }),
-    [setCode, setActivePanel],
-  );
+  const handleClick = useCallback(() => setCode(null), [setCode]);
 
+  const isActive = !!code;
   useEffect(() => {
-    if (activePanel === 1) {
+    if (isActive) {
       outputRef.current?.scrollTo({ top: 0 });
     }
-  }, [activePanel]);
+  }, [isActive]);
 
   return (
-    <Panel title="Result" active={activePanel === 1}>
+    <Panel title="Result" active={isActive}>
       <button onClick={handleClick}>code ◀︎</button>
       <output className={styles.root} htmlFor={editorId} ref={outputRef}>
         {content}

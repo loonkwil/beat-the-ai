@@ -1,4 +1,4 @@
-import { useRef, useContext, useCallback, startTransition } from "react";
+import { useRef, useContext, useCallback } from "react";
 import AppContext from "~/context/App";
 import Panel from "~/components/Main/Panel";
 import { useCodeMirror } from "~/hooks";
@@ -13,7 +13,7 @@ const readonlyParts = {
 };
 
 export default function Code({ editorId }: { editorId: string }) {
-  const { setCode, activePanel, setActivePanel } = useContext(AppContext);
+  const { code, setCode } = useContext(AppContext);
 
   const changeFilter = useCallback(
     (_: string, next: string): boolean =>
@@ -28,18 +28,14 @@ export default function Code({ editorId }: { editorId: string }) {
     autoFocus: true,
   });
 
-  const handleClick = useCallback(
-    () =>
-      startTransition(() => {
-        const code = editorRef.current?.state?.doc?.toString() ?? null;
-        setCode(code);
-        setActivePanel(1);
-      }),
-    [setCode, setActivePanel, editorRef],
-  );
+  const handleClick = useCallback(() => {
+    const code = editorRef.current?.state?.doc?.toString() ?? null;
+    setCode(code);
+  }, [setCode, editorRef]);
 
+  const isActive = !code;
   return (
-    <Panel title="Code" active={activePanel === 0}>
+    <Panel title="Code" active={isActive}>
       <div id={editorId} className={styles.root} ref={wrapperRef} />
       <button onClick={handleClick}>run ▶︎</button>
     </Panel>
