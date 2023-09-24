@@ -56,7 +56,7 @@ export function shuffle(list: Array<unknown>): Array<unknown> {
 /**
  * Returns a list of numbers from "start" (inclusive) to "end" (exclusive).
  * @example
- * // retuns [1,2,3]
+ * // returns [1,2,3]
  * range(1, 4);
  */
 export function range(start: number, end: number): Array<number> {
