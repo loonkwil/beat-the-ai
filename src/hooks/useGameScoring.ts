@@ -15,6 +15,26 @@ function updateLevelResults(prev: Results, level: number, next: any): Results {
   });
 }
 
+/**
+ * Chrome does not support async iterator (for await loops) for ReadableStreams.
+ * https://bugs.chromium.org/p/chromium/issues/detail?id=929585
+ * This function will convert a ReadableStream to an async iterator, so the same
+ * for await loop will work.
+ */
+async function* createIteratorForStream<T>(
+  stream: ReadableStream<T>,
+): AsyncGenerator<T> {
+  const reader = stream.getReader();
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) {
+      return;
+    }
+
+    yield value;
+  }
+}
+
 export default function useGameScoring({ code }: { code: string }) {
   const [state, setState] = useState<Results | Error>(initialResults);
 
@@ -37,8 +57,9 @@ export default function useGameScoring({ code }: { code: string }) {
         setState(results);
 
         const stream = createStream({ code, level, signal: controller.signal });
+        const iterator = createIteratorForStream(stream);
         try {
-          for await (const game of stream) {
+          for await (const game of iterator) {
             const score = results[level].score + game.score;
             const games = [...results[level].games, game];
             results = updateLevelResults(results, level, { score, games });
