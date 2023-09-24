@@ -37,13 +37,28 @@ export function countWhile<T>(
   return i;
 }
 
-export function shuffle(arr: Array<unknown>): Array<unknown> {
-  if (arr.length === 0) {
+/**
+ * @example
+ * // returns [3, 1, 2]
+ * shuffle([1, 2, 3]);
+ */
+export function shuffle(list: Array<unknown>): Array<unknown> {
+  if (list.length === 0) {
     return [];
   }
 
-  const i = Math.floor(Math.random() * arr.length);
-  const x = arr[i];
-  const xs = arr.toSpliced(i, 1);
+  const i = Math.random() * list.length;
+  const x = list.at(i);
+  const xs = list.toSpliced(i, 1);
   return [x, ...shuffle(xs)];
+}
+
+/**
+ * Returns a list of numbers from "start" (inclusive) to "end" (exclusive).
+ * @example
+ * // retuns [1,2,3]
+ * range(1, 4);
+ */
+export function range(start: number, end: number): Array<number> {
+  return Array.from({ length: Math.abs(end - start) }, (_, i) => start + i);
 }

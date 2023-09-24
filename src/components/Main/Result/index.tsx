@@ -1,8 +1,10 @@
-import { useContext } from "react";
+import { useContext, startTransition, useCallback } from "react";
 import AppContext from "~/context/App";
+import Panel from "~/components/Main/Panel";
 import Icon from "~/components/Main/Result/Icon";
 import { rounds } from "~/settings";
 import styles from "~/components/Main/Result/index.module.css";
+import { useGameScoring } from "~/hooks";
 
 function Games({ games }) {
   return Array.from({ length: rounds }, (_, gameIndex) => {
@@ -20,7 +22,7 @@ function LevelResults({ status, level, score, games }) {
       }`}
     >
       <div className={styles.result} title={`${score}/${rounds}`}>
-        <h3>Level {level}</h3>
+        <h3>Level {level + 1}</h3>
         <Icon type={status} />
       </div>
       <div className={styles.details}>
@@ -31,7 +33,8 @@ function LevelResults({ status, level, score, games }) {
 }
 
 export default function Result({ editorId }: { editorId: string }) {
-  const [{ results }] = useContext(AppContext);
+  const { code, setCode, activePanel, setActivePanel } = useContext(AppContext);
+  const results = useGameScoring({ code });
   const content =
     results instanceof Error ? (
       <pre>
@@ -42,16 +45,28 @@ export default function Result({ editorId }: { editorId: string }) {
         <LevelResults
           key={levelIndex}
           status={status}
-          level={levelIndex + 1}
+          level={levelIndex}
           score={score}
           games={games}
         />
       ))
     );
 
+  const handleClick = useCallback(
+    () =>
+      startTransition(() => {
+        setCode(null);
+        setActivePanel(0);
+      }),
+    [setCode, setActivePanel],
+  );
+
   return (
-    <output className={styles.root} htmlFor={editorId}>
-      {content}
-    </output>
+    <Panel title="Result" active={activePanel === 1}>
+      <button onClick={handleClick}>code ◀︎</button>
+      <output className={styles.root} htmlFor={editorId}>
+        {content}
+      </output>
+    </Panel>
   );
 }

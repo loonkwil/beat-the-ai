@@ -31,3 +31,27 @@ export function* coordinates(
     length += 1;
   }
 }
+
+/**
+ * @example
+ * // returns [[1, 'a'], [1, 'b'], [2, 'a'], [2, 'b']]
+ * cartesianProduct([1, 2], ['a', 'b']);
+ */
+export function cartesianProduct<T, U>(
+  a: Array<T>,
+  b: Array<U>,
+): Array<[T, U]> {
+  return a.flatMap((fromA) => b.map((fromB) => [fromA, fromB]));
+}
+
+/**
+ * @example
+ * // returns 1.4142135623730951
+ * euclideanDistance([1, 1], [2, 2]);
+ */
+export function euclideanDistance(
+  a: [number, number],
+  b: [number, number],
+): number {
+  return ((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2) ** 0.5;
+}
