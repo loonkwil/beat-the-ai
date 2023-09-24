@@ -1,4 +1,10 @@
-import { useContext, startTransition, useCallback } from "react";
+import {
+  useContext,
+  startTransition,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import AppContext from "~/context/App";
 import Panel from "~/components/Main/Panel";
 import Icon from "~/components/Main/Result/Icon";
@@ -33,6 +39,7 @@ function LevelResults({ status, level, score, games }) {
 }
 
 export default function Result({ editorId }: { editorId: string }) {
+  const outputRef = useRef();
   const { code, setCode, activePanel, setActivePanel } = useContext(AppContext);
   const results = useGameScoring({ code });
   const content =
@@ -61,10 +68,16 @@ export default function Result({ editorId }: { editorId: string }) {
     [setCode, setActivePanel],
   );
 
+  useEffect(() => {
+    if (activePanel === 1) {
+      outputRef.current?.scrollTo({ top: 0 });
+    }
+  }, [activePanel]);
+
   return (
     <Panel title="Result" active={activePanel === 1}>
       <button onClick={handleClick}>code ◀︎</button>
-      <output className={styles.root} htmlFor={editorId}>
+      <output className={styles.root} htmlFor={editorId} ref={outputRef}>
         {content}
       </output>
     </Panel>
