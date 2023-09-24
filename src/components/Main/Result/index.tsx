@@ -4,22 +4,25 @@ import {
   useCallback,
   useEffect,
   useRef,
+  useMemo,
 } from "react";
 import AppContext from "~/context/App";
 import Panel from "~/components/Main/Panel";
 import Icon from "~/components/Main/Result/Icon";
-import { rounds } from "~/settings";
-import styles from "~/components/Main/Result/index.module.css";
+import { levels, rounds } from "~/settings";
 import { useGameScoring } from "~/hooks";
+import { range, shuffle } from "~/lib/utils/list";
+import styles from "~/components/Main/Result/index.module.css";
 
-function Games({ games }) {
+function Games({ games, idMap }) {
   return Array.from({ length: rounds }, (_, gameIndex) => {
-    const game = games[gameIndex];
+    const id = idMap[gameIndex];
+    const game = games[id];
     return <span key={gameIndex} data-result={game?.score} />;
   });
 }
 
-function LevelResults({ status, level, score, games }) {
+function LevelResults({ status, level, score, games, idMap }) {
   return (
     <div
       key={level}
@@ -32,7 +35,7 @@ function LevelResults({ status, level, score, games }) {
         <Icon type={status} />
       </div>
       <div className={styles.details}>
-        <Games games={games} />
+        <Games games={games} idMap={idMap} />
       </div>
     </div>
   );
@@ -42,17 +45,22 @@ export default function Result({ editorId }: { editorId: string }) {
   const outputRef = useRef();
   const { code, setCode, activePanel, setActivePanel } = useContext(AppContext);
   const results = useGameScoring({ code });
+  const idMap = useMemo(
+    () => range(0, levels).map(() => shuffle(range(0, rounds))),
+    [code],
+  );
   const content =
     results instanceof Error ? (
       <pre>
         <code>{results.message}</code>
       </pre>
     ) : (
-      results.map(({ status, score, games }, levelIndex) => (
+      results.map(({ status, score, games }, level) => (
         <LevelResults
-          key={levelIndex}
+          idMap={idMap[level]}
+          key={level}
           status={status}
-          level={levelIndex}
+          level={level}
           score={score}
           games={games}
         />
