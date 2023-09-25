@@ -1,9 +1,9 @@
-import { useContext } from "react";
+import { useContext, lazy, Suspense } from "react";
 import AppContext from "~/context/App";
-import Code from "~/components/Main/Code";
-import Result from "~/components/Main/Result";
 import styles from "~/components/Main/index.module.css";
 
+const Code = lazy(() => import("~/components/Main/Code"));
+const Result = lazy(() => import("~/components/Main/Result"));
 export default function Main() {
   const { code } = useContext(AppContext);
   const activePanelIndex = code ? 1 : 0;
@@ -14,8 +14,10 @@ export default function Main() {
       style={{ "--active-panel": activePanelIndex } as React.CSSProperties}
     >
       <div className={styles.container}>
-        <Code editorId={editorId} />
-        <Result editorId={editorId} />
+        <Suspense>
+          <Code editorId={editorId} />
+          <Result editorId={editorId} />
+        </Suspense>
       </div>
     </main>
   );
