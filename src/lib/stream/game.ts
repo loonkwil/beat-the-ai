@@ -54,7 +54,7 @@ function rotate(board: Board): Board {
   return multiply(board, -1);
 }
 
-function isMoveValid(move: any): boolean {
+function isMoveValid(move: unknown): boolean {
   if (!Array.isArray(move) || move.length !== 2) {
     return false;
   }
@@ -71,7 +71,7 @@ export function* neighbors(
     /* ↗ ↙ */ [1, 1],
     /* → ← */ [1, 0],
     /* ↘ ↖ */ [1, -1],
-  ];
+  ] as Array<[number, number]>;
 
   const predicate = ([x, y]: CellPosition): boolean => board?.[x]?.[y] === 1;
   for (const dir of directions) {

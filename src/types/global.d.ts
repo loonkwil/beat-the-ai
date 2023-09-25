@@ -1,23 +1,21 @@
-type FixedArray<T, L> = Array<T> & { length: L };
-
 export {};
 
 declare global {
   type Color = -1 | 1; // -1: white, 1: black
 
-  type CellPosition = FixedArray<number, 2>;
+  type CellPosition = [number, number];
   type CellValue = Color | 0; // 0: empty cell
 
   type Move = CellPosition;
   type Moves = Array<Move>;
 
-  type Row = FixedArray<CellValue, 15>;
-  type Board = FixedArray<Row, 15>;
+  type Row = Array<CellValue>;
+  type Board = Array<Row>;
 
   type PlayerName = "user" | "robot";
-  type PlayerNames = { [color: Color]: PlayerName };
+  type PlayerNames = { [T in Color]: PlayerName };
   type Player = (board: Board) => Move;
-  type Players = { [color: Color]: Player };
+  type Players = { [T in Color]: Player };
   type Winner = Color | 0; // 0: draw
   type Score = 0 | 0.5 | 1;
 
@@ -33,4 +31,11 @@ declare global {
   };
 
   type Results = Array<LevelResult>;
+
+  type Code = string | null;
+
+  type AppContextType = {
+    code: Code;
+    setCode: Dispatch<SetStateAction<Code>>;
+  };
 }

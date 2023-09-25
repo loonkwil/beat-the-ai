@@ -1,8 +1,4 @@
-export default function Icon({
-  type = "empty",
-}: {
-  type?: "succeeded" | "failed" | "ongoing" | "pending";
-}) {
+export default function Icon({ type = "pending" }: { type?: Status }) {
   const icon = {
     succeeded: <path d="M10.833 16L14.6063 19.7733L22.1663 12.2267" />,
     failed: (

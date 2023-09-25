@@ -19,9 +19,8 @@ export function parse(str: string): {
     throw new Error("Function declaration not found");
   }
 
-  const {
-    indices: [fn, id, params, body],
-  } = matches;
+  const { indices = [] } = matches;
+  const [fn, id, params, body] = indices;
 
   return { ...fn, id, params, body };
 }

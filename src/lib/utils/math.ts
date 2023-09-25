@@ -1,10 +1,12 @@
+type NestedArray<T> = Array<T | NestedArray<T>>;
+
 /**
  * @example
  * multiply(2, 3); // -> 6
  * multiply([0, 1], -1); // -> [0, -1]
  * multiply([[1, 2], [3, 4]], 2); // -> [[2, 4], [6, 8]]
  */
-export function multiply<T extends Array<T | number>>(
+export function multiply<T extends NestedArray<number>>(
   vector: T,
   scalar: number,
 ): T {
@@ -37,11 +39,11 @@ export function* coordinates(
  * // returns [[1, 'a'], [1, 'b'], [2, 'a'], [2, 'b']]
  * cartesianProduct([1, 2], ['a', 'b']);
  */
-export function cartesianProduct<T, U>(
+export function cartesianProduct<T, U = T>(
   a: Array<T>,
   b: Array<U>,
 ): Array<[T, U]> {
-  return a.flatMap((fromA) => b.map((fromB) => [fromA, fromB]));
+  return a.flatMap((fromA) => b.map((fromB) => [fromA, fromB] as [T, U]));
 }
 
 /**

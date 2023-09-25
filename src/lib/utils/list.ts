@@ -42,13 +42,13 @@ export function countWhile<T>(
  * // returns [3, 1, 2]
  * shuffle([1, 2, 3]);
  */
-export function shuffle(list: Array<unknown>): Array<unknown> {
+export function shuffle<T>(list: Array<T>): Array<T> {
   if (list.length === 0) {
     return [];
   }
 
   const i = Math.random() * list.length;
-  const x = list.at(i);
+  const x = list.at(i)!;
   const xs = list.toSpliced(i, 1);
   return [x, ...shuffle(xs)];
 }

@@ -13,24 +13,29 @@ import { cartesianProduct, euclideanDistance } from "~/lib/utils/math";
 
 const robots = [
   // Level 1
-  function move(board) {
+  function move(board: Board): CellPosition {
     const [x, y] = Array.from({ length: 2 }, () =>
       Math.floor(Math.random() * 15),
     );
     return board[x][y] ? move(board) : [x, y];
   },
+
   // Level 2
-  function move(board) {
-    const center = [15 / 2, 15 / 2];
-    return cartesianProduct(range(0, 15), range(0, 15))
-      .filter(([x, y]) => !board[x][y])
-      .reduce(
-        (min, position) => {
-          const distance = euclideanDistance(center, position);
-          return distance < min.distance ? { distance, position } : min;
-        },
-        { distance: Infinity, position: null },
-      ).position;
+  function move(board: Board): CellPosition | null {
+    const center = [15 / 2, 15 / 2] as CellPosition;
+    const emptyCells = cartesianProduct(range(0, 15), range(0, 15)).filter(
+      ([x, y]) => !board[x][y],
+    );
+    return shuffle(emptyCells).reduce(
+      (
+        min: { distance: number; position: null | CellPosition },
+        position: CellPosition,
+      ) => {
+        const distance = euclideanDistance(center, position);
+        return distance < min.distance ? { distance, position } : min;
+      },
+      { distance: Infinity, position: null },
+    ).position;
   },
 ] as Array<Player>;
 
@@ -71,7 +76,7 @@ const onMessage = ({
 
   for (let i = 0; i < rounds; i += 1) {
     const [white, black] = shuffle([user, robot]);
-    const players = { "-1": white, 1: black };
+    const players = { "-1": white, 1: black } as Players;
 
     const { winner, moves } = play(players);
     const score = winner === 0 ? 0.5 : players[winner] === user ? 1 : 0;

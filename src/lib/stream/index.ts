@@ -18,7 +18,7 @@ export function create({
   signal,
   threads = navigator.hardwareConcurrency ?? 1,
 }: {
-  code: string;
+  code: Code;
   level: number;
   signal: AbortSignal;
   threads?: number;

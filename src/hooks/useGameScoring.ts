@@ -8,7 +8,11 @@ const initialResults = Array.from({ length: levels }, () => ({
   games: [],
 })) as Results;
 
-function updateLevelResults(prev: Results, level: number, next: any): Results {
+function updateLevelResults(
+  prev: Results,
+  level: number,
+  next: Partial<LevelResult>,
+): Results {
   return prev.toSpliced(level, 1, {
     ...prev[level],
     ...next,
@@ -35,7 +39,7 @@ async function* createIteratorForStream<T>(
   }
 }
 
-export default function useGameScoring({ code }: { code: string }) {
+export default function useGameScoring({ code }: { code: Code }) {
   const [state, setState] = useState<Results | Error>(initialResults);
 
   useEffect(() => {
@@ -58,10 +62,10 @@ export default function useGameScoring({ code }: { code: string }) {
         setState(results);
 
         const stream = createStream({ code, level, signal: controller.signal });
-        const iterator = createIteratorForStream(stream);
+        const iterator = createIteratorForStream<GameWithScore>(stream);
         try {
           for await (const game of iterator) {
-            const score = results[level].score + game.score;
+            const score = (results[level].score + game.score) as Score;
             const games = [...results[level].games, game];
             results = updateLevelResults(results, level, { score, games });
             setState(results);

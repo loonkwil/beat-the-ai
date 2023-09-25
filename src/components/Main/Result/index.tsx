@@ -7,7 +7,15 @@ import { useGameScoring } from "~/hooks";
 import { range, shuffle } from "~/lib/utils/list";
 import styles from "~/components/Main/Result/index.module.css";
 
-function Games({ games, idMap }) {
+type IdMap = Array<number>;
+
+function Games({
+  games,
+  idMap,
+}: {
+  games: Array<GameWithScore>;
+  idMap: IdMap;
+}): React.ReactNode {
   return Array.from({ length: rounds }, (_, gameIndex) => {
     const id = idMap[gameIndex];
     const game = games[id];
@@ -15,7 +23,13 @@ function Games({ games, idMap }) {
   });
 }
 
-function LevelResults({ status, level, score, games, idMap }) {
+function LevelResults({
+  status,
+  level,
+  score,
+  games,
+  idMap,
+}: { level: number; idMap: IdMap } & LevelResult): React.ReactNode {
   return (
     <div
       key={level}
@@ -34,8 +48,12 @@ function LevelResults({ status, level, score, games, idMap }) {
   );
 }
 
-export default function Result({ editorId }: { editorId: string }) {
-  const outputRef = useRef();
+export default function Result({
+  editorId,
+}: {
+  editorId: string;
+}): React.ReactNode {
+  const outputRef = useRef<HTMLOutputElement | null>(null);
   const { code, setCode } = useContext(AppContext);
   const results = useGameScoring({ code });
   const idMap = useMemo(

@@ -5,7 +5,7 @@ import Main from "~/components/Main";
 import styles from "~/components/App.module.css";
 
 export default function App() {
-  const [code, setCode] = useState(null);
+  const [code, setCode] = useState<Code>(null);
   return (
     <AppContext.Provider value={{ code, setCode }}>
       <div className={styles.root}>
