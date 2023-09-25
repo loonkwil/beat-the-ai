@@ -13,4 +13,7 @@
   height: 100%;
   translate: calc(-100% * var(--active-panel, 0));
   transition: translate 200ms;
+  @media (prefers-reduced-motion) {
+    transition-duration: 0ms;
+  }
 }

@@ -1,4 +1,4 @@
-export const rounds = 100;
+export const rounds = 120;
 
 export const levels = 2;
 

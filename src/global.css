@@ -12,9 +12,16 @@
   --panel-bg: var(--white);
   --panel-border: var(--black);
   --panel-text: var(--black);
+  --button-bg: var(--black);
+  --button-text: var(--white);
+
+  --game-border: var(--black);
+
+  --icon-stroke: var(--black);
   --icon-succeeded: var(--green);
   --icon-failed: var(--red);
   --icon-ongoing: var(--yellow);
+  --icon-pending: transparent;
 
   --space: 1rem;
 
@@ -23,6 +30,7 @@
     --main-text: var(--white);
     --panel-bg: var(--yellow);
     --panel-border: var(--white);
+
     --icon-ongoing: var(--white);
   }
 

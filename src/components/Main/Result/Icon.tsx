@@ -26,7 +26,7 @@ export default function Icon({ type = "pending" }: { type?: Status }) {
         strokeWidth="2"
         strokeLinecap="round"
         strokeLinejoin="round"
-        style={{ stroke: "var(--black)" }}
+        style={{ stroke: `var(--icon-stroke)` }}
       >
         <path
           d="M16.5003 29.3333C23.8337 29.3333 29.8337 23.3333 29.8337 16C29.8337 8.66667 23.8337 2.66667 16.5003 2.66667C9.16699 2.66667 3.16699 8.66667 3.16699 16C3.16699 23.3333 9.16699 29.3333 16.5003 29.3333Z"
