@@ -37,6 +37,32 @@ export function countWhile<T>(
   return i;
 }
 
+export function minBy<T>(
+  iterable: Iterable<T>,
+  fn: (item: T) => number,
+): T | null {
+  let min = {
+    item: null as T,
+    value: Infinity,
+  };
+
+  for (const item of iterable) {
+    const value = fn(item);
+    if (value < min.value) {
+      min = { item, value };
+    }
+  }
+
+  return min.item;
+}
+
+export function maxBy<T>(
+  iterable: Iterable<T>,
+  fn: (item: T) => number,
+): T | null {
+  return minBy(iterable, (item) => -1 * fn(item));
+}
+
 /**
  * @example
  * // returns [3, 1, 2]

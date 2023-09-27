@@ -1,6 +1,6 @@
 export const rounds = 120;
 
-export const levels = 2;
+export const levels = 3;
 
 export const initialCode = `/**
  * Function that calculates the next move in a given state.

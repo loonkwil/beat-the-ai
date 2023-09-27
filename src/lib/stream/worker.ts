@@ -5,11 +5,10 @@
 // worker.addEventListener('message', ({ data }) => /* ... */);
 // worker.addEventListener('error', ({ message}) => /* ... */);
 // worker.postMessage({ code: '...', rounds: 100, level: 0 });
-import { play } from "~/lib/stream/game";
-import { shuffle } from "~/lib/utils/list";
+import { getEmptyCells, neighbors, play } from "~/lib/stream/game";
+import { shuffle, maxBy, minBy } from "~/lib/utils/list";
 import { parse } from "~/lib/utils/func";
-import { range } from "~/lib/utils/list";
-import { cartesianProduct, euclideanDistance } from "~/lib/utils/math";
+import { euclideanDistance } from "~/lib/utils/math";
 
 const robots = [
   // Level 1
@@ -23,19 +22,14 @@ const robots = [
   // Level 2
   function move(board: Board): CellPosition | null {
     const center = [15 / 2, 15 / 2] as CellPosition;
-    const emptyCells = cartesianProduct(range(0, 15), range(0, 15)).filter(
-      ([x, y]) => !board[x][y],
-    );
-    return shuffle(emptyCells).reduce(
-      (
-        min: { distance: number; position: null | CellPosition },
-        position: CellPosition,
-      ) => {
-        const distance = euclideanDistance(center, position);
-        return distance < min.distance ? { distance, position } : min;
-      },
-      { distance: Infinity, position: null },
-    ).position;
+    const emptyCells = shuffle(getEmptyCells(board));
+    return minBy(emptyCells, (cell) => euclideanDistance(center, cell));
+  },
+
+  // Level 3
+  function move(board: Board): CellPosition | null {
+    const emptyCells = shuffle(getEmptyCells(board));
+    return maxBy(emptyCells, (cell) => Math.max(...neighbors(board, cell)));
   },
 ] as Array<Player>;
 

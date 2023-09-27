@@ -1,5 +1,6 @@
 import { multiply, coordinates } from "~/lib/utils/math";
-import { countWhile, some } from "~/lib/utils/list";
+import { countWhile, some, range } from "~/lib/utils/list";
+import { cartesianProduct } from "~/lib/utils/math";
 
 function stringifyMove([x, y]: Move): string {
   return String.fromCharCode("A".charCodeAt(0) + x) + `${y + 1}`;
@@ -78,6 +79,12 @@ export function* neighbors(
     yield countWhile(coordinates(cell, dir), predicate) +
       countWhile(coordinates(cell, multiply(dir, -1)), predicate);
   }
+}
+
+export function getEmptyCells(board: Board): Array<CellPosition> {
+  return cartesianProduct(range(0, 15), range(0, 15)).filter(
+    ([x, y]) => !board[x][y],
+  );
 }
 
 function createInvalidMoveError({
