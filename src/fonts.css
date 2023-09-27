@@ -1,0 +1,8 @@
+@font-face {
+  font-family: "Iosevka";
+  font-display: swap;
+  font-weight: 600;
+  font-stretch: normal;
+  font-style: normal;
+  src: url("/fonts/iosevka-semibold.woff2") format("woff2");
+}

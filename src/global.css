@@ -1,4 +1,4 @@
-@import "@fontsource/iosevka/600.css";
+@import "./fonts.css";
 
 :root {
   --white: #ffffff;
