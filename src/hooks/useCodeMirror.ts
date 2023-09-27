@@ -6,7 +6,7 @@ import {
   crosshairCursor,
   highlightActiveLine,
 } from "@codemirror/view";
-import { indentOnInput, bracketMatching } from "@codemirror/language";
+import { bracketMatching } from "@codemirror/language";
 import { EditorState } from "@codemirror/state";
 import {
   closeBrackets,
@@ -19,7 +19,6 @@ import { javascript } from "@codemirror/lang-javascript";
 const extensions = [
   minimalSetup,
   EditorState.allowMultipleSelections.of(true),
-  indentOnInput(),
   bracketMatching(),
   closeBrackets(),
   autocompletion({ icons: false }),
