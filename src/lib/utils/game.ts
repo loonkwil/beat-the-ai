@@ -2,11 +2,11 @@ import { multiply, coordinates } from "~/lib/utils/math";
 import { countWhile, some, range } from "~/lib/utils/list";
 import { cartesianProduct } from "~/lib/utils/math";
 
-function stringifyMove([x, y]: Move): string {
+export function stringifyMove([x, y]: Move): string {
   return String.fromCharCode("A".charCodeAt(0) + x) + `${y + 1}`;
 }
 
-function stringifyMoves(moves: Moves): string {
+export function stringifyMoves(moves: Moves): string {
   return moves
     .reduce(
       (str, move, i) =>
@@ -16,7 +16,7 @@ function stringifyMoves(moves: Moves): string {
     .trim();
 }
 
-function stringifyBoard(moves: Moves): string {
+export function stringifyBoard(moves: Moves): string {
   const emptyBoard = [
     "15 . . . . . . . . . . . . . . .",
     "14 . . . . . . . . . . . . . . .",
@@ -47,15 +47,15 @@ function stringifyBoard(moves: Moves): string {
   }, emptyBoard);
 }
 
-function createBoard(length = 15): Board {
+export function createBoard(length = 15): Board {
   return Array.from({ length }, () => Array.from({ length }).fill(0)) as Board;
 }
 
-function rotate(board: Board): Board {
+export function rotate(board: Board): Board {
   return multiply(board, -1);
 }
 
-function isMoveValid(move: unknown): boolean {
+export function isMoveValid(move: unknown): boolean {
   if (!Array.isArray(move) || move.length !== 2) {
     return false;
   }

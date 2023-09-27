@@ -5,10 +5,10 @@
 // worker.addEventListener('message', ({ data }) => /* ... */);
 // worker.addEventListener('error', ({ message}) => /* ... */);
 // worker.postMessage({ code: '...', rounds: 100, level: 0 });
-import { getEmptyCells, neighbors, play } from "~/lib/stream/game";
-import { shuffle, maxBy, minBy } from "~/lib/utils/list";
+import { getEmptyCells, neighbors, play, rotate } from "~/lib/utils/game";
+import { shuffle, pickOne } from "~/lib/utils/list";
 import { parse } from "~/lib/utils/func";
-import { euclideanDistance } from "~/lib/utils/math";
+import { euclideanDistance, sum, maxBy } from "~/lib/utils/math";
 
 const robots = [
   // Level 1
@@ -22,14 +22,35 @@ const robots = [
   // Level 2
   function move(board: Board): CellPosition | null {
     const center = [15 / 2, 15 / 2] as CellPosition;
-    const emptyCells = shuffle(getEmptyCells(board));
-    return minBy(emptyCells, (cell) => euclideanDistance(center, cell));
+    const getCellValue = (cell: CellPosition): number =>
+      -1 * euclideanDistance(center, cell);
+
+    const empty = getEmptyCells(board);
+    const best = maxBy(empty, getCellValue);
+    return pickOne(best);
   },
 
   // Level 3
   function move(board: Board): CellPosition | null {
-    const emptyCells = shuffle(getEmptyCells(board));
-    return maxBy(emptyCells, (cell) => Math.max(...neighbors(board, cell)));
+    const getCellValue = (cell: CellPosition): number =>
+      Math.max(...neighbors(board, cell));
+
+    const empty = getEmptyCells(board);
+    const best = maxBy(empty, getCellValue);
+    return pickOne(best);
+  },
+
+  // Level 4
+  function move(board: Board): CellPosition | null {
+    const getCellValue = (cell: CellPosition): number =>
+      sum(Array.from(neighbors(board, cell), (count) => count ** 10)) +
+      sum(
+        Array.from(neighbors(rotate(board), cell), (count) => count ** 10 - 1),
+      );
+
+    const empty = getEmptyCells(board);
+    const best = maxBy(empty, getCellValue);
+    return pickOne(best);
   },
 ] as Array<Player>;
 

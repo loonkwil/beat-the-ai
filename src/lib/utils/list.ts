@@ -37,32 +37,6 @@ export function countWhile<T>(
   return i;
 }
 
-export function minBy<T>(
-  iterable: Iterable<T>,
-  fn: (item: T) => number,
-): T | null {
-  let min = {
-    item: null as T,
-    value: Infinity,
-  };
-
-  for (const item of iterable) {
-    const value = fn(item);
-    if (value < min.value) {
-      min = { item, value };
-    }
-  }
-
-  return min.item;
-}
-
-export function maxBy<T>(
-  iterable: Iterable<T>,
-  fn: (item: T) => number,
-): T | null {
-  return minBy(iterable, (item) => -1 * fn(item));
-}
-
 /**
  * @example
  * // returns [3, 1, 2]
@@ -77,6 +51,11 @@ export function shuffle<T>(list: Array<T>): Array<T> {
   const x = list.at(i)!;
   const xs = list.toSpliced(i, 1);
   return [x, ...shuffle(xs)];
+}
+
+export function pickOne<T>(list: Array<T>): T {
+  const i = Math.random() * list.length;
+  return list.at(i)!;
 }
 
 /**

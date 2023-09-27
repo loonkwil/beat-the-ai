@@ -15,6 +15,32 @@ export function multiply<T extends NestedArray<number>>(
   ) as T;
 }
 
+export function sum(arr: Array<number>): number {
+  return arr.reduce((acc, curr) => acc + curr, 0);
+}
+
+export function maxBy<T>(arr: Array<T>, fn: (item: T) => number): Array<T> {
+  return arr.reduce(
+    (maxSoFar, item: T) => {
+      const value = fn(item);
+      if (value > maxSoFar.value) {
+        return { items: [item], value };
+      }
+
+      if (value === maxSoFar.value) {
+        return { items: [...maxSoFar.items, item], value };
+      }
+
+      return maxSoFar;
+    },
+    { items: [] as Array<T>, value: -Infinity },
+  ).items;
+}
+
+export function minBy<T>(arr: Array<T>, fn: (item: T) => number): Array<T> {
+  return maxBy(arr, (item) => -1 * fn(item));
+}
+
 /**
  * @example
  * // returns [1, 1], [2, 2], [3, 3], ...
