@@ -5,7 +5,14 @@
 // worker.addEventListener('message', ({ data }) => /* ... */);
 // worker.addEventListener('error', ({ message}) => /* ... */);
 // worker.postMessage({ code: '...', rounds: 100, level: 0 });
-import { getEmptyCells, neighbors, play, rotate } from "~/lib/utils/game";
+import {
+  getEmptyCells,
+  neighbors,
+  play,
+  rotate,
+  stringifyBoard,
+  stringifyMoves,
+} from "~/lib/utils/game";
 import { shuffle, pickOne } from "~/lib/utils/list";
 import { parse } from "~/lib/utils/func";
 import { euclideanDistance, sum, maxBy } from "~/lib/utils/math";
@@ -95,6 +102,15 @@ const onMessage = ({
 
     const { winner, moves } = play(players);
     const score = winner === 0 ? 0.5 : players[winner] === user ? 1 : 0;
+
+    console.group(
+      `Level ${level + 1}, Score: ${score},`,
+      white === user ? "🤓: O, 🤖: X" : "🤖: O, 🤓: X",
+    );
+    console.log(stringifyBoard(moves));
+    console.log(stringifyMoves(moves));
+    console.groupEnd();
+
     self.postMessage({ winner, moves, score });
   }
 
