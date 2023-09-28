@@ -34,6 +34,13 @@
     --icon-ongoing: var(--white);
   }
 
+  @media (prefers-contrast: more) {
+    --black: #000000;
+    --yellow: yellow;
+    --red: red;
+    --green: green;
+  }
+
   @media (width >= 640px) {
     --space: 2rem;
   }
