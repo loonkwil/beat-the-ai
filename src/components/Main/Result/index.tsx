@@ -30,6 +30,7 @@ function LevelResults({
   games,
   idMap,
 }: { level: number; idMap: IdMap } & LevelResult): React.ReactNode {
+  const percent = Math.round((score / rounds) * 100);
   return (
     <div
       key={level}
@@ -37,11 +38,15 @@ function LevelResults({
         status === "pending" ? styles.disabled : ""
       }`}
     >
-      <div className={styles.result} title={`${score}/${rounds}`}>
+      <div
+        className={styles.result}
+        title={`You won ${percent}% of the games.`}
+        aria-label={`Status: ${status}. Result: you won ${percent}% of the games.`}
+      >
         <h3>Level {level + 1}</h3>
         <Icon type={status} />
       </div>
-      <div className={styles.details}>
+      <div className={styles.details} aria-hidden="true">
         <Games games={games} idMap={idMap} />
       </div>
     </div>
@@ -89,7 +94,9 @@ export default function Result({
 
   return (
     <Panel title="Result" active={isActive}>
-      <button onClick={handleClick}>code ◀︎</button>
+      <button onClick={handleClick} aria-label="Go back to edit the code">
+        code ◀︎
+      </button>
       <output className={styles.root} htmlFor={editorId} ref={outputRef}>
         {content}
       </output>

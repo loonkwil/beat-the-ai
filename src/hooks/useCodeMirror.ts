@@ -35,11 +35,13 @@ export default function useCodeMirror({
   initialValue = "",
   changeFilter = () => true,
   autoFocus = false,
+  id = null,
 }: {
   root: React.RefObject<HTMLElement>;
   initialValue?: string;
   changeFilter?: (prev: string, next: string) => boolean;
   autoFocus?: boolean;
+  id: string | null;
 }) {
   const ref = useRef<null | EditorView>(null);
 
@@ -52,6 +54,7 @@ export default function useCodeMirror({
       doc: initialValue,
       extensions: [
         ...extensions,
+        EditorView.contentAttributes.of(id ? { id } : {}),
         EditorState.changeFilter.of(({ startState, state }) => {
           const prev = startState.doc.toString();
           const next = state.doc.toString();
@@ -66,7 +69,7 @@ export default function useCodeMirror({
     }
 
     return () => ref.current?.destroy();
-  }, [root, changeFilter, autoFocus]);
+  }, [root, changeFilter, autoFocus, id]);
 
   return ref;
 }

@@ -26,6 +26,7 @@ export default function Code({ editorId }: { editorId: string }) {
     initialValue: initialCode,
     changeFilter,
     autoFocus: true,
+    id: editorId,
   });
 
   const handleClick = useCallback(() => {
@@ -36,8 +37,10 @@ export default function Code({ editorId }: { editorId: string }) {
   const isActive = !code;
   return (
     <Panel title="Code" active={isActive}>
-      <div id={editorId} className={styles.root} ref={wrapperRef} />
-      <button onClick={handleClick}>run ▶︎</button>
+      <div className={styles.root} ref={wrapperRef} />
+      <button onClick={handleClick} aria-label="Execute the code">
+        run ▶︎
+      </button>
     </Panel>
   );
 }
