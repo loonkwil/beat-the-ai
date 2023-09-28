@@ -1,5 +1,9 @@
 # Beat the AI
 
+![Preview of the app](https://github.com/loonkwil/beat-the-ai/assets/1401202/24bc6573-4c1d-498e-bd0c-0b44011b3a1f)
+
+https://loonkwil.github.io/beat-the-ai/
+
 Try to write a JavaScript function that beats the AI in a game called Five in
 a Row.
 
