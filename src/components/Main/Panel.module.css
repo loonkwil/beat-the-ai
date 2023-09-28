@@ -7,6 +7,11 @@
     left: -9999px;
   }
 
+  & > *:focus-within {
+    outline: 2px solid var(--green);
+    outline-offset: -2px;
+  }
+
   & > *:not(button) {
     flex: 1 1 100%;
     overflow: auto;
