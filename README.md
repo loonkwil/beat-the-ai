@@ -7,6 +7,14 @@ https://loonkwil.github.io/beat-the-ai/
 Try to write a JavaScript function that beats the AI in a game called Five in
 a Row.
 
+This app was created mainly to experiment with
+[Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API),
+[Web Streams](https://developer.mozilla.org/en-US/docs/Web/API/Streams_API),
+new CSS features (e.g. [nesting](https://drafts.csswg.org/css-nesting/),
+[dynamic viewport units](https://developer.mozilla.org/en-US/docs/Web/CSS/length#relative_length_units_based_on_viewport),
+[range syntax in media queries](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_media_queries/Using_media_queries#syntax_improvements_in_level_4)),
+and accessibility.
+
 ## Five in a Row
 
 Five in a Row, also known as Gomoku or Gobang, is a classic two-player strategy
